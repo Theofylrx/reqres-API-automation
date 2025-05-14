@@ -34,6 +34,11 @@ The project tests the following API endpoints:
 - Gradle
 - Rest-Assured
 - TestNG
+- VS Code with extensions for Java development
+
+## VS Code Extensions Required
+1. **Extension Pack for Java** - Microsoft (vscjava.vscode-java-pack)
+2. **Gradle for Java** - Microsoft (vscjava.vscode-gradle)
 
 ## Project Structure
 ```

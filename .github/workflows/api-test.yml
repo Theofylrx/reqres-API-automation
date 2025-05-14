@@ -1,0 +1,32 @@
+name: ReqRes API Tests
+
+on:
+  #schedule:
+    # Schedule to run 8 times a day at specific hours in UTC+2
+    #- cron: '0 0,3,6,9,12,15,18,21 * * *'
+  push:
+    branches: 
+      - main
+
+jobs:
+  Run-Rest-Assured-Tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v4
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+    - name: Build and Run REST Assured Tests with TestNG
+      run: make .PHONY
+      
+    - name: Archive REST-Assured results
+      uses: actions/upload-artifact@v3
+      with:
+        name: REST-Assured-results
+        path: target/assured-reports
+
+    - name: Upload REST-Assured results to GitHub
+      uses: actions/upload-artifact@v3
+      with:
+        name: REST-Assured-results
+        path: target/assured-reports

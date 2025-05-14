@@ -6,7 +6,8 @@
  */
 
 plugins {
-    java
+    id("java");
+    id("io.qameta.allure") version "2.11.2";
 }
 
 group = "com.reqres"
@@ -22,11 +23,11 @@ dependencies {
     //implementation(libs.testng); //add testng dependencies
     implementation("io.rest-assured:json-path:5.5.2"); //add rest-assured json path
     //implementation(libs.guava) // This dependency is used by the application.
+    implementation("io.qameta.allure:allure-testng:2.24.0"); // Add allure report dependency
+    implementation("io.qameta.allure:allure-rest-assured:2.24.0"); // Add allure report dependency
+
     // JSON manipulation
     implementation("org.json:json:20230227")
-    
-    // TestNG
-    testImplementation("org.testng:testng:7.7.1")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
