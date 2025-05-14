@@ -38,27 +38,26 @@ The project tests the following API endpoints:
 ## Project Structure
 ```
 ├── .gradle                                     # 
-├── app                                         #
-│   ├── src
-│   │    ├── build                              #
-│   │    ├── main
-│   │    │    ├── /java/reqres/api/automation
-│   │    │    └── /resources
-│   │    └── test
-│   │         ├── /java/reqres/api/automation
-│   │         └── /resources
-│   └── build.gradle.kts                        # Gradle build configuration
+├── src
+│   ├── main
+│   │    ├── /java/reqres/api/automation        #
+│   │    └── /resources                         #
+│   └── test
+│        ├── /java/reqres/api/automation        #
+│        └── /resources                         #
 │
 ├── build                                       #
 ├── gradle                                      #
 │   └── wrapper
-│       ├── gradle-wrapper.jar
-│       └── gradle-wrapper.properties
+│       ├── gradle-wrapper.jar                  #
+│       └── gradle-wrapper.properties           #
 │
 ├── .gitattributes                              #
-├── .gitignore                                  # 
+├── .gitignore
+├── build.gradle.kts                            # 
 ├── gradlew                                     # 
 ├── gradlew.bat                                 # 
+├── makefile                                    # 
 ├── README.md                                   # Project documentation
 └── settings.gradle.kts                         # Gradle settings
 ```

@@ -8,8 +8,8 @@ clean:
 build:
 	$(GRADLE_CLI) build
 
-run:
-	$(GRADLE_CLI) run
+# run:
+# 	$(GRADLE_CLI) run
 
 test:
 	$(GRADLE_CLI) test
