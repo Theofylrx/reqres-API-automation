@@ -69,17 +69,22 @@ The project tests the following API endpoints:
 git clone https://github.com/Theofylrx/reqres-API-automation
 cd reqres-API-automation
 ```
-
+### Clean the project
+```bash
+make clean
+```
 ### Build the Project
 ```bash
-./gradlew build
+make build
 ```
-
 ### Run Tests
 ```bash
-./gradlew test
+make test
 ```
-
+### Clean, Build & Run Tests
+```bash
+make .PHONY
+```
 ## IDE Setup
 ### VS Code
 1. Open VS Code
