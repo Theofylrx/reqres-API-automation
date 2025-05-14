@@ -14,10 +14,9 @@ import com.reqres.util.RestUtil;
 import static io.restassured.RestAssured.given;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-
 public class UserApiTests {
     private Integer userIdToTest;
-    private final String EMAIL_TO_FIND = "charles.morris@reqres.in";
+    private static final String EMAIL_TO_FIND = "charles.morris@reqres.in";
     
     @BeforeClass
     public void setup() {

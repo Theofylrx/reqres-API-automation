@@ -7,9 +7,8 @@
 
 plugins {
     id("java");
-    id("io.qameta.allure") version "2.11.2";
 }
-
+val allureVersion = "2.25.0"
 group = "com.reqres"
 
 repositories {
@@ -23,8 +22,9 @@ dependencies {
     //implementation(libs.testng); //add testng dependencies
     implementation("io.rest-assured:json-path:5.5.2"); //add rest-assured json path
     //implementation(libs.guava) // This dependency is used by the application.
-    implementation("io.qameta.allure:allure-testng:2.24.0"); // Add allure report dependency
-    implementation("io.qameta.allure:allure-rest-assured:2.24.0"); // Add allure report dependency
+    implementation(platform("io.qameta.allure:allure-bom:$allureVersion"))// Import allure-bom to ensure correct versions of all the dependencies are used
+    implementation("io.qameta.allure:allure-rest-assured")// Add necessary Allure dependencies to dependencies section
+    implementation("io.qameta.allure:allure-testng")// Add necessary Allure dependencies to dependencies section
 
     // JSON manipulation
     implementation("org.json:json:20230227")
