@@ -6,21 +6,48 @@ import org.json.JSONObject;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.reqres.util.RestUtil;
+import com.reqres.util.api.RestUtil;
+import com.reqres.util.data.TestDataFactory;
+import com.reqres.util.data.TestDataLoader;
+import com.reqres.util.data.TestDataManager;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
+import io.qameta.allure.restassured.AllureRestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+
+@Feature("User API")
 public class UserApiTests {
     private int userIdToTest;
-    private static final String EMAIL_TO_FIND = "charles.morris@reqres.in";
+    private TestDataManager dataManager;
+    private JSONObject testData;
     
     @BeforeClass
     public void setup() {
+        // Set up RestAssured
         RestUtil.setupRestAssured();
+        
+        // Initialize test data manager
+        dataManager = TestDataManager.getInstance();
+        
+        // Load test data from JSON file
+        testData = TestDataLoader.getUserData();
+    }
+    
+    @AfterClass
+    public void cleanup() {
+        // Clear shared test data after tests complete
+        dataManager.clearData();
+        TestDataLoader.clearCache();
     }
     
     /**
@@ -30,10 +57,18 @@ public class UserApiTests {
      * Count the amount of users returned on the current page
      */
     @Test(priority = 1)
+    @Description("Verify that the GET /users endpoint returns a list of users")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("List Users")
     public void testGetUsers() {
         System.out.println("Running Test 1: GET /api/users");
         
+        // Get pagination settings from test data
+        JSONObject paginationData = TestDataLoader.getPaginationData();
+        int defaultPerPage = paginationData.getInt("default_per_page");
+        
         Response response = given()
+                .filter(new AllureRestAssured())
                 .spec(RestUtil.getRequestSpec())
                 .when()
                 .get("/users")
@@ -50,6 +85,7 @@ public class UserApiTests {
         int usersCount = userList.size();
         int perPage = jsonPath.getInt("per_page");
         assertEquals(usersCount, perPage, "Number of users should match per_page value");
+        assertEquals(perPage, defaultPerPage, "Per page value should match expected default");
         
         System.out.println("Users on current page: " + usersCount);
     }
@@ -60,14 +96,27 @@ public class UserApiTests {
      * Extract the id of the user where email = 'charles.morris@reqres.in'
      */
     @Test(priority = 2)
+    @Description("Verify that a specific user can be found by email")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Find User by Email")
     public void testGetAllUsersAndExtractId() {
         System.out.println("Running Test 2: GET /api/users with query params");
         
+        // Get test data
+        JSONObject defaultUser = testData.getJSONObject("default");
+        String emailToFind = defaultUser.getString("email");
+        
+        // Get pagination settings from test data
+        JSONObject paginationData = TestDataLoader.getPaginationData();
+        int defaultPage = paginationData.getInt("default_page");
+        int defaultPerPage = paginationData.getInt("default_per_page");
+        
         // Request all users (page 1)
         Response response = given()
+                .filter(new AllureRestAssured())
                 .spec(RestUtil.getRequestSpec())
-                .queryParam("page", 1)
-                .queryParam("per_page", 12)
+                .queryParam("page", defaultPage)
+                .queryParam("per_page", defaultPerPage)
                 .when()
                 .get("/users")
                 .then()
@@ -77,12 +126,17 @@ public class UserApiTests {
         JsonPath jsonPath = response.jsonPath();
         
         // Find user with specified email
-        List<Integer> ids = jsonPath.getList("data.findAll { user -> user.email == '" + EMAIL_TO_FIND + "' }.id");
+        List<Integer> ids = jsonPath.getList("data.findAll { user -> user.email == '" + emailToFind + "' }.id");
         
-        assertFalse(ids.isEmpty(), "User with email " + EMAIL_TO_FIND + " should exist");
+        assertFalse(ids.isEmpty(), "User with email " + emailToFind + " should exist");
         
         userIdToTest = ids.get(0);
-        System.out.println("Found user ID: " + userIdToTest + " for email: " + EMAIL_TO_FIND);
+        
+        // Store user ID for use in other tests
+        dataManager.storeData(TestDataManager.KEY_USER_ID, userIdToTest);
+        dataManager.storeData(TestDataManager.KEY_USER_EMAIL, emailToFind);
+        
+        System.out.println("Found user ID: " + userIdToTest + " for email: " + emailToFind);
     }
     
     /**
@@ -91,12 +145,25 @@ public class UserApiTests {
      * Validate that the response contains correct user details
      */
     @Test(priority = 3, dependsOnMethods = "testGetAllUsersAndExtractId")
+    @Description("Verify that a single user can be retrieved by ID")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Get Single User")
     public void testGetSingleUser() {
         System.out.println("Running Test 3: GET /api/users/{id}");
         
+        // Get test data
+        JSONObject defaultUser = testData.getJSONObject("default");
+        String expectedEmail = defaultUser.getString("email");
+        String expectedFirstName = defaultUser.getString("first_name");
+        String expectedLastName = defaultUser.getString("last_name");
+        
+        // Retrieve user ID from test data manager
+        int userId = dataManager.retrieveData(TestDataManager.KEY_USER_ID);
+        
         Response response = given()
+                .filter(new AllureRestAssured())
                 .spec(RestUtil.getRequestSpec())
-                .pathParam("id", userIdToTest)
+                .pathParam("id", userId)
                 .when()
                 .get("/users/{id}")
                 .then()
@@ -109,9 +176,13 @@ public class UserApiTests {
         String firstName = jsonPath.getString("data.first_name");
         String lastName = jsonPath.getString("data.last_name");
         
-        assertEquals(email, EMAIL_TO_FIND, "Email should match");
-        assertEquals(firstName, "Charles", "First name should match");
-        assertEquals(lastName, "Morris", "Last name should match");
+        assertEquals(email, expectedEmail, "Email should match");
+        assertEquals(firstName, expectedFirstName, "First name should match");
+        assertEquals(lastName, expectedLastName, "Last name should match");
+        
+        // Store user details for use in other tests
+        dataManager.storeData(TestDataManager.KEY_USER_FIRST_NAME, firstName);
+        dataManager.storeData(TestDataManager.KEY_USER_LAST_NAME, lastName);
     }
     
     /**
@@ -120,16 +191,23 @@ public class UserApiTests {
      * Validate status 201 and that response contains the sent data
      */
     @Test(priority = 4)
+    @Description("Verify that a new user can be created")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Create User")
     public void testCreateUser() {
         System.out.println("Running Test 4: POST /api/users");
         
-        // Create user request data
-        JSONObject userJson = new JSONObject();
-        userJson.put("name", "John Doe");
-        userJson.put("job", "Software Tester");
+        // Get test data
+        JSONObject createUserData = testData.getJSONObject("create");
+        String name = createUserData.getString("name");
+        String job = createUserData.getString("job");
+        
+        // Create user request data using factory
+        JSONObject userJson = TestDataFactory.createUserData(name, job);
         
         // Send POST request
         Response response = given()
+                .filter(new AllureRestAssured())
                 .spec(RestUtil.getRequestSpec())
                 .body(userJson.toString())
                 .when()
@@ -139,11 +217,15 @@ public class UserApiTests {
                 .extract().response();
         
         JsonPath jsonPath = response.jsonPath();
+        String createdId = jsonPath.getString("id");
 
-        assertNotNull(jsonPath.getString("id"), "Created user should have an ID");
-        assertEquals(jsonPath.getString("name"), "John Doe", "Name should match");
-        assertEquals(jsonPath.getString("job"), "Software Tester", "Job should match");
+        assertNotNull(createdId, "Created user should have an ID");
+        assertEquals(jsonPath.getString("name"), name, "Name should match");
+        assertEquals(jsonPath.getString("job"), job, "Job should match");
         assertNotNull(jsonPath.getString("createdAt"), "Created date should be present");
+        
+        // Store created user ID
+        dataManager.storeData(TestDataManager.KEY_CREATED_USER_ID, createdId);
     }
     
     /**
@@ -152,18 +234,28 @@ public class UserApiTests {
      * Validate the status is 200 and that updated data is returned
      */
     @Test(priority = 5, dependsOnMethods = "testGetAllUsersAndExtractId")
+    @Description("Verify that a user can be updated")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Update User")
     public void testUpdateUser() {
         System.out.println("Running Test 5: PUT /api/users/{id}");
         
-        // Update user request data
-        JSONObject updateJson = new JSONObject();
-        updateJson.put("name", "John Updated");
-        updateJson.put("job", "Senior Software Tester");
+        // Get test data
+        JSONObject updateUserData = testData.getJSONObject("update");
+        String updatedName = updateUserData.getString("name");
+        String updatedJob = updateUserData.getString("job");
+        
+        // Retrieve user ID from test data manager
+        int userId = dataManager.retrieveData(TestDataManager.KEY_USER_ID);
+        
+        // Update user request data using factory
+        JSONObject updateJson = TestDataFactory.updateUserData(updatedName, updatedJob);
         
         // Send PUT request
         Response response = given()
+                .filter(new AllureRestAssured())    
                 .spec(RestUtil.getRequestSpec())
-                .pathParam("id", userIdToTest)
+                .pathParam("id", userId)
                 .body(updateJson.toString())
                 .when()
                 .put("/users/{id}")
@@ -173,8 +265,8 @@ public class UserApiTests {
         
         JsonPath jsonPath = response.jsonPath();
         
-        assertEquals(jsonPath.getString("name"), "John Updated", "Updated name should match");
-        assertEquals(jsonPath.getString("job"), "Senior Software Tester", "Updated job should match");
+        assertEquals(jsonPath.getString("name"), updatedName, "Updated name should match");
+        assertEquals(jsonPath.getString("job"), updatedJob, "Updated job should match");
         assertNotNull(jsonPath.getString("updatedAt"), "Updated date should be present");
     }
     
@@ -183,17 +275,24 @@ public class UserApiTests {
      * Validate status code 204 (no content)
      */
     @Test(priority = 6, dependsOnMethods = "testGetAllUsersAndExtractId")
+    @Description("Verify that a user can be deleted")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Delete User")
     public void testDeleteUser() {
         System.out.println("Running Test 6: DELETE /api/users/{id}");
         
+        // Retrieve user ID from test data manager
+        int userId = dataManager.retrieveData(TestDataManager.KEY_USER_ID);
+        
         given()
+                .filter(new AllureRestAssured())
                 .spec(RestUtil.getRequestSpec())
-                .pathParam("id", userIdToTest)
+                .pathParam("id", userId)
                 .when()
                 .delete("/users/{id}")
                 .then()
                 .statusCode(204);
         
-        System.out.println("User with ID " + userIdToTest + " successfully deleted");
+        System.out.println("User with ID " + userId + " successfully deleted");
     }
 }

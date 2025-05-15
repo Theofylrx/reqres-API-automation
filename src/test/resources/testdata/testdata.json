@@ -1,0 +1,21 @@
+{
+    "users": {
+        "default": {
+            "email": "charles.morris@reqres.in",
+            "first_name": "Charles",
+            "last_name": "Morris"
+        },
+        "create": {
+            "name": "John Doe",
+            "job": "Software Tester"
+        },
+        "update": {
+            "name": "John Updated",
+            "job": "Senior Software Tester"
+        }
+    },
+    "pagination": {
+        "default_page": 1,
+        "default_per_page": 6
+    }
+}

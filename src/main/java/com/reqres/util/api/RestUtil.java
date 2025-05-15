@@ -1,4 +1,4 @@
-package com.reqres.util;
+package com.reqres.util.api;
 
 import com.reqres.config.TestConfig;
 

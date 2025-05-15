@@ -116,3 +116,89 @@ make .PHONY
 2. Select "Import Project"
 3. Navigate to the project directory and select the build.gradle file
 4. Click "Open"
+
+## Test Data Management
+This document outlines the test data management approach used in the ReqRes API automation project.
+
+### Overview
+The test data management solution consists of several components that work together to provide a flexible, maintainable, and reusable test data approach.
+
+### Components
+1. **TestDataManager**
+A singleton class that provides:
+
+Storage and retrieval of data that needs to be shared between test methods
+Default values for commonly used test data
+Constants for data keys to prevent typos and ensure consistency
+
+```bash
+Location: src/main/java/com/reqres/api/data/TestDataManager.java
+```
+2. **TestDataFactory**
+A factory class that creates test data objects for different API requests:
+
+User creation data
+User update data
+Registration data
+Login data
+Predefined test data for common scenarios
+
+```bash
+Location: src/main/java/com/reqres/api/data/TestDataFactory.java
+```
+3. **External Test Data Files**
+JSON files containing test data for different test scenarios:
+
+User data
+Authentication data
+Pagination settings
+Resource data
+
+```bash
+Location: src/test/resources/testdata/testdata.json
+```
+4. **TestDataLoader**
+Utility class for loading and accessing test data from external files:
+
+Loads JSON test data files
+Provides access to specific sections of test data
+Caches data for better performance
+
+```bash
+Location: src/main/java/com/reqres/api/data/TestDataLoader.java
+```
+### Usage Examples
+#### Loading Test Data from Files
+```bash
+java// Load the user section from test data
+JSONObject userData = TestDataLoader.getUserData();
+
+// Get a specific user's data
+JSONObject defaultUser = userData.getJSONObject("default");
+String emailToFind = defaultUser.getString("email");
+```
+#### Creating Test Data with Factory
+```bash
+java// Create user data for a new user
+JSONObject userJson = TestDataFactory.createUserData("John Doe", "Software Tester");
+
+// Use predefined test data
+JSONObject standardUser = TestDataFactory.getStandardUserData();
+```
+#### Sharing Data Between Test Methods
+```bash
+java// Store data
+TestDataManager dataManager = TestDataManager.getInstance();
+dataManager.storeData(TestDataManager.KEY_USER_ID, userId);
+
+// Retrieve data in another test method
+int userId = dataManager.retrieveData(TestDataManager.KEY_USER_ID);
+```
+#### Best Practices
+```
+1. Use constants for data keys to prevent typos and ensure consistency.
+2. Externalize test data in JSON files for better maintenance.
+3. Use factory methods to create test data objects.
+4. Share data between tests using the TestDataManager.
+5. Clear shared data after tests complete to prevent test dependencies.
+```

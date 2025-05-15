@@ -6,7 +6,7 @@
  */
 
 
-val allureVersion = "2.25.0"
+val allureVersion = "2.24.0"
 val restAssuredVersion = "5.5.2"
 val slf4jVersion = "2.0.7"
 val testngVersion = "7.9.0"
