@@ -29,7 +29,7 @@ dependencies {
     implementation("org.testng:testng:$testngVersion") //add testng dependencies
     //implementation(libs.testng); //add testng dependencies
     implementation("io.rest-assured:json-path:$restAssuredVersion") //add rest-assured json path
-    implementation(libs.guava) // This dependency is used by the application.
+    //implementation(libs.guava) // This dependency is used by the application.
     implementation("io.qameta.allure:allure-rest-assured:$allureVersion")// Add necessary Allure dependencies to dependencies section
     implementation("io.qameta.allure:allure-testng:$allureVersion")// Add necessary Allure dependencies to dependencies section
     implementation("org.json:json:$jsonVersion")// JSON manipulation
