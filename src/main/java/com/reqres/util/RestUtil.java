@@ -22,7 +22,6 @@ public class RestUtil {
                 .addHeader("x-api-key", "reqres-free-v1")
                 .build();
     }
-    
     /**
      * Setup configuration for Rest Assured
      */

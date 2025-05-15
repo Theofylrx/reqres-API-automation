@@ -42,29 +42,37 @@ The project tests the following API endpoints:
 
 ## Project Structure
 ```
-├── .gradle                                     # 
+├── .github                                                 # 
 ├── src
 │   ├── main
-│   │    ├── /java/reqres/api/automation        #
-│   │    └── /resources                         #
+│   │    ├── /java/reqres/api/automation                    #
+│   │    │                      ├── config
+│   │    │                      │      └── TestConfig.java  #
+│   │    │                      ├── models                  #
+│   │    │                      └── util
+│   │    │                             └── RestUtil.java    #
+│   │    └── /resources                                     #
 │   └── test
-│        ├── /java/reqres/api/automation        #
-│        └── /resources                         #
+│        ├── /java/reqres/api/automation                    #
+│        │                      └── UserApiTests.java       #
+│        └── /resources                                     #
+│                 └── allure.properties                     #
 │
-├── build                                       #
-├── gradle                                      #
-│   └── wrapper
-│       ├── gradle-wrapper.jar                  #
-│       └── gradle-wrapper.properties           #
+├── build                                                   #
+├── gradle                                                  #
+│   ├── wrapper
+│   │    ├── gradle-wrapper.jar                             #
+│   │    └── gradle-wrapper.properties                      #
+│   └── libs.versions.toml                                  #
 │
-├── .gitattributes                              #
+├── .gitattributes                                          #
 ├── .gitignore
-├── build.gradle.kts                            # 
-├── gradlew                                     # 
-├── gradlew.bat                                 # 
-├── makefile                                    # 
-├── README.md                                   # Project documentation
-└── settings.gradle.kts                         # Gradle settings
+├── build.gradle.kts                                        # 
+├── gradlew                                                 # 
+├── gradlew.bat                                             # 
+├── makefile                                                # 
+├── README.md                                               # Project documentation
+└── settings.gradle.kts                                     # Gradle settings
 ```
 
 ## Setup Instructions

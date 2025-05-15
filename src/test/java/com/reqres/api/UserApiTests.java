@@ -15,7 +15,7 @@ import static io.restassured.RestAssured.given;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 public class UserApiTests {
-    private Integer userIdToTest;
+    private int userIdToTest;
     private static final String EMAIL_TO_FIND = "charles.morris@reqres.in";
     
     @BeforeClass
@@ -44,11 +44,9 @@ public class UserApiTests {
         JsonPath jsonPath = response.jsonPath();
         List<Object> userList = jsonPath.getList("data");
         
-        // Validations
         assertNotNull(userList, "User list should not be null");
         assertFalse(userList.isEmpty(), "User list should not be empty");
         
-        // Count users on current page
         int usersCount = userList.size();
         int perPage = jsonPath.getInt("per_page");
         assertEquals(usersCount, perPage, "Number of users should match per_page value");
@@ -107,12 +105,10 @@ public class UserApiTests {
         
         JsonPath jsonPath = response.jsonPath();
         
-        // Extract user details
         String email = jsonPath.getString("data.email");
         String firstName = jsonPath.getString("data.first_name");
         String lastName = jsonPath.getString("data.last_name");
         
-        // Validations
         assertEquals(email, EMAIL_TO_FIND, "Email should match");
         assertEquals(firstName, "Charles", "First name should match");
         assertEquals(lastName, "Morris", "Last name should match");
@@ -143,8 +139,7 @@ public class UserApiTests {
                 .extract().response();
         
         JsonPath jsonPath = response.jsonPath();
-        
-        // Validations
+
         assertNotNull(jsonPath.getString("id"), "Created user should have an ID");
         assertEquals(jsonPath.getString("name"), "John Doe", "Name should match");
         assertEquals(jsonPath.getString("job"), "Software Tester", "Job should match");
@@ -178,7 +173,6 @@ public class UserApiTests {
         
         JsonPath jsonPath = response.jsonPath();
         
-        // Validations
         assertEquals(jsonPath.getString("name"), "John Updated", "Updated name should match");
         assertEquals(jsonPath.getString("job"), "Senior Software Tester", "Updated job should match");
         assertNotNull(jsonPath.getString("updatedAt"), "Updated date should be present");
