@@ -5,10 +5,19 @@
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/8.8/userguide/building_java_projects.html in the Gradle documentation.
  */
 
-plugins {
-    id("java");
-}
+
 val allureVersion = "2.25.0"
+val restAssuredVersion = "5.5.2"
+val slf4jVersion = "2.0.7"
+val testngVersion = "7.9.0"
+val jsonVersion = "20230227"
+val javaVersion = "21"
+
+plugins {
+    id("java")
+    id("io.qameta.allure") version "2.11.2"
+}
+
 group = "com.reqres"
 
 repositories {
@@ -16,27 +25,44 @@ repositories {
 }
 
 dependencies {
-    // Rest Assured
-    implementation("io.rest-assured:rest-assured:5.5.2"); //add rest-assured dependencies
-    implementation("org.testng:testng:7.9.0"); //add testng dependencies
+    implementation("io.rest-assured:rest-assured:$restAssuredVersion") //add rest-assured dependencies
+    implementation("org.testng:testng:$testngVersion") //add testng dependencies
     //implementation(libs.testng); //add testng dependencies
-    implementation("io.rest-assured:json-path:5.5.2"); //add rest-assured json path
-    //implementation(libs.guava) // This dependency is used by the application.
-    implementation(platform("io.qameta.allure:allure-bom:$allureVersion"))// Import allure-bom to ensure correct versions of all the dependencies are used
-    implementation("io.qameta.allure:allure-rest-assured")// Add necessary Allure dependencies to dependencies section
-    implementation("io.qameta.allure:allure-testng")// Add necessary Allure dependencies to dependencies section
-
-    // JSON manipulation
-    implementation("org.json:json:20230227")
+    implementation("io.rest-assured:json-path:$restAssuredVersion") //add rest-assured json path
+    implementation(libs.guava) // This dependency is used by the application.
+    implementation("io.qameta.allure:allure-rest-assured:$allureVersion")// Add necessary Allure dependencies to dependencies section
+    implementation("io.qameta.allure:allure-testng:$allureVersion")// Add necessary Allure dependencies to dependencies section
+    implementation("org.json:json:$jsonVersion")// JSON manipulation
+    implementation("org.slf4j:slf4j-api:$slf4jVersion")// Logging
+    implementation("org.slf4j:slf4j-simple:$slf4jVersion")// Logging
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(javaVersion)
     }
 }
 
 tasks.test {
-    useTestNG()
+    useTestNG(){
+        suites("src/test/resources/testng.xml")
+        systemProperties = mapOf(
+            "allure.results.directory" to "${project.buildDir}/allure-results"
+        )
+    }
+    // Configure Allure report generation
+    finalizedBy("allureReport")
+}
+
+allure {
+    version.set(allureVersion)
+    adapter {
+        aspectjWeaver.set(true)
+        frameworks {
+            testng {
+                enabled.set(true)
+            }
+        }
+    }
 }

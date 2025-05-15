@@ -10,3 +10,9 @@ build:
 
 test:
 	$(GRADLE_CLI) test
+
+report:
+	$(GRADLE_CLI) allureReport
+
+serve-report:
+	$(GRADLE_CLI) allureServe

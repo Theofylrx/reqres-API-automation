@@ -3,8 +3,21 @@
 
 [versions]
 guava = "33.0.0-jre"
+rest-assured = "5.5.2"
 testng = "7.9.0"
+allure = "2.25.0"
+json = "20230227"
+slf4j = "2.0.7"
 
 [libraries]
-guava = { module = "com.google.guava:guava", version.ref = "guava" }
+rest-assured = { module = "io.rest-assured:rest-assured", version.ref = "rest-assured" }
+
 testng = { module = "org.testng:testng", version.ref = "testng" }
+
+json = { module = "org.json:json", version.ref = "json" }
+
+allure-testng = { module = "io.qameta.allure:allure-testng", version.ref = "allure" }
+allure-rest-assured = { module = "io.qameta.allure:allure-rest-assured", version.ref = "allure" }
+
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
