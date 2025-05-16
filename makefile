@@ -9,7 +9,7 @@ build:
 	$(GRADLE_CLI) build
 
 test:
-	$(GRADLE_CLI) test
+	$(GRADLE_CLI) test -P env=prod
 
 report:
 	$(GRADLE_CLI) allureReport

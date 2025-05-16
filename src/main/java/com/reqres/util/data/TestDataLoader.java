@@ -12,13 +12,34 @@ import org.json.JSONObject;
 /**
  * Utility class for loading test data from external files
  */
-public class TestDataLoader {
+public final class TestDataLoader {
     
     private static final String TEST_DATA_FILE = "/testdata/testdata.json";
     private static JSONObject testData;
     
     // Cache for parsed test data sections
     private static final Map<String, JSONObject> dataCache = new HashMap<>();
+    
+    /**
+     * Private constructor to prevent instantiation of this utility class
+     */
+    private TestDataLoader() {
+        // Utility class should not be instantiated
+        throw new AssertionError("TestDataLoader is a utility class and should not be instantiated");
+    }
+    
+    /**
+     * Custom runtime exception for test data loading failures
+     */
+    public static class TestDataRuntimeException extends RuntimeException {
+        public TestDataRuntimeException(String message) {
+            super(message);
+        }
+        
+        public TestDataRuntimeException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
     
     /**
      * Load the test data JSON file
@@ -28,14 +49,14 @@ public class TestDataLoader {
         if (testData == null) {
             try (InputStream is = TestDataLoader.class.getResourceAsStream(TEST_DATA_FILE)) {
                 if (is == null) {
-                    throw new RuntimeException("Test data file not found: " + TEST_DATA_FILE);
+                    throw new TestDataRuntimeException("Test data file not found: " + TEST_DATA_FILE);
                 }
                 try (Scanner scanner = new Scanner(is, StandardCharsets.UTF_8.name())) {
                     String jsonString = scanner.useDelimiter("\\A").next();
                     testData = new JSONObject(jsonString);
                 }
             } catch (IOException e) {
-                throw new RuntimeException("Failed to load test data file", e);
+                throw new TestDataRuntimeException("Failed to load test data file", e);
             }
         }
         return testData;
@@ -52,7 +73,7 @@ public class TestDataLoader {
             if (data.has(section)) {
                 dataCache.put(section, data.getJSONObject(section));
             } else {
-                throw new RuntimeException("Section '" + section + "' not found in test data");
+                throw new TestDataRuntimeException("Section '" + section + "' not found in test data");
             }
         }
         return dataCache.get(section);

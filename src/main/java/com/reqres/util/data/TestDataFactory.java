@@ -6,6 +6,11 @@ import org.json.JSONObject;
  * Factory class to generate test data for API requests
  */
 public class TestDataFactory {
+
+    // Private constructor to prevent instantiation
+    private TestDataFactory() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
     
     /**
      * Create a JSON object for creating a new user
@@ -31,29 +36,6 @@ public class TestDataFactory {
     }
     
     /**
-     * Create a JSON object for user registration
-     * @param email User email
-     * @param password User password
-     * @return JSONObject with registration data
-     */
-    public static JSONObject registerUserData(String email, String password) {
-        JSONObject registerJson = new JSONObject();
-        registerJson.put("email", email);
-        registerJson.put("password", password);
-        return registerJson;
-    }
-    
-    /**
-     * Create a JSON object for user login
-     * @param email User email
-     * @param password User password
-     * @return JSONObject with login data
-     */
-    public static JSONObject loginUserData(String email, String password) {
-        return registerUserData(email, password);
-    }
-    
-    /**
      * Predefined test data: Standard user creation
      * @return JSONObject with standard test user data
      */
@@ -67,13 +49,5 @@ public class TestDataFactory {
      */
     public static JSONObject getUpdatedUserData() {
         return updateUserData("John Updated", "Senior Software Tester");
-    }
-    
-    /**
-     * Predefined test data: Standard registration
-     * @return JSONObject with standard registration data
-     */
-    public static JSONObject getStandardRegistrationData() {
-        return registerUserData("eve.holt@reqres.in", "pistol");
     }
 }

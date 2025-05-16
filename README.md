@@ -65,6 +65,8 @@ The project tests the following API endpoints:
 │                 ├── testdata
 │                 │       └── testdata.json                             #
 │                 ├── allure.properties                                 #
+│                 ├── environment-prod.properties                       #
+│                 ├── environment-test.properties                       #
 │                 └── testng.xml                                        #
 │
 ├── build                                                               #

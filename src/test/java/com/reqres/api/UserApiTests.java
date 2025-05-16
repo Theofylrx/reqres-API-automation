@@ -25,11 +25,13 @@ import static io.restassured.RestAssured.given;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
-@Feature("User API")
+@Feature("User API Tests")
 public class UserApiTests {
     private int userIdToTest;
     private TestDataManager dataManager;
     private JSONObject testData;
+    private static final String API_KEY = "reqres-free-v1";
+    private static final String HEADER = "x-api-key";
     
     @BeforeClass
     public void setup() {
@@ -37,7 +39,7 @@ public class UserApiTests {
         RestUtil.setupRestAssured();
         
         // Initialize test data manager
-        dataManager = TestDataManager.getInstance();
+        dataManager = new TestDataManager();
         
         // Load test data from JSON file
         testData = TestDataLoader.getUserData();
@@ -70,6 +72,7 @@ public class UserApiTests {
         Response response = given()
                 .filter(new AllureRestAssured())
                 .spec(RestUtil.getRequestSpec())
+                .header(HEADER, API_KEY)
                 .when()
                 .get("/users")
                 .then()
@@ -115,6 +118,7 @@ public class UserApiTests {
         Response response = given()
                 .filter(new AllureRestAssured())
                 .spec(RestUtil.getRequestSpec())
+                .header(HEADER, API_KEY)
                 .queryParam("page", defaultPage)
                 .queryParam("per_page", defaultPerPage)
                 .when()
@@ -163,6 +167,7 @@ public class UserApiTests {
         Response response = given()
                 .filter(new AllureRestAssured())
                 .spec(RestUtil.getRequestSpec())
+                .header(HEADER, API_KEY)
                 .pathParam("id", userId)
                 .when()
                 .get("/users/{id}")
@@ -209,6 +214,7 @@ public class UserApiTests {
         Response response = given()
                 .filter(new AllureRestAssured())
                 .spec(RestUtil.getRequestSpec())
+                .header(HEADER, API_KEY)
                 .body(userJson.toString())
                 .when()
                 .post("/users")
@@ -255,6 +261,7 @@ public class UserApiTests {
         Response response = given()
                 .filter(new AllureRestAssured())    
                 .spec(RestUtil.getRequestSpec())
+                .header(HEADER, API_KEY)
                 .pathParam("id", userId)
                 .body(updateJson.toString())
                 .when()
@@ -287,6 +294,7 @@ public class UserApiTests {
         given()
                 .filter(new AllureRestAssured())
                 .spec(RestUtil.getRequestSpec())
+                .header(HEADER, API_KEY)
                 .pathParam("id", userId)
                 .when()
                 .delete("/users/{id}")

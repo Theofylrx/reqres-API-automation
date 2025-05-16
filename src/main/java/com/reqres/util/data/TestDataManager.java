@@ -4,12 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Central class for managing test data in the ReqRes API tests
+ * Class for managing test data in the ReqRes API tests
  */
 public class TestDataManager {
-    
-    // Singleton instance
-    private static TestDataManager instance;
     
     // Store for test data that needs to be shared between test methods
     private final Map<String, Object> sharedData;
@@ -20,21 +17,10 @@ public class TestDataManager {
     private static final int DEFAULT_PER_PAGE = 6;
     
     /**
-     * Private constructor to enforce singleton pattern
+     * Constructor for TestDataManager
      */
-    private TestDataManager() {
+    public TestDataManager() {
         sharedData = new HashMap<>();
-    }
-    
-    /**
-     * Get singleton instance of TestDataManager
-     * @return TestDataManager instance
-     */
-    public static synchronized TestDataManager getInstance() {
-        if (instance == null) {
-            instance = new TestDataManager();
-        }
-        return instance;
     }
     
     /**
